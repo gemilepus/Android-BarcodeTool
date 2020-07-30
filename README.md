@@ -1,2 +1,2 @@
-# QRCodeTool-Mini
+# QRCodeTool
 ![alt text?](https://github.com/gemilepus/QRCodeTool-Mini/blob/master/Cover.jpg)
