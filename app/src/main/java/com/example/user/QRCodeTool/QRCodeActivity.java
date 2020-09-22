@@ -29,10 +29,9 @@ import java.util.Random;
 public class QRCodeActivity extends Activity {
 
     private AppCompatButton btn_save;
+    private String QRCode_Str;
     EditText etContent;
     Bitmap bit;
-    private String QRCode_Str;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,22 +52,16 @@ public class QRCodeActivity extends Activity {
         btn_QRCode_scan.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
                 Intent intent = new Intent(getApplication(), ScannerActivity.class);
                 startActivity(intent);
-
             }
         });
-
 
         btn_save = (AppCompatButton)findViewById(R.id. btn_save);
         btn_save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-
                 SaveImage(bit);
-
             }
         });
         btn_save.setVisibility(View.GONE);
@@ -87,15 +80,9 @@ public class QRCodeActivity extends Activity {
 //        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outStream);
 //        outStream.flush();
 //        outStream.close();
-
-
-
     }
 
-    
-
     private void SaveImage(Bitmap finalBitmap) {
-
         // permission check
         String permission = Manifest.permission.WRITE_EXTERNAL_STORAGE;
         int grant = ContextCompat.checkSelfPermission(this, permission);
@@ -104,7 +91,6 @@ public class QRCodeActivity extends Activity {
             permission_list[0] = permission;
             ActivityCompat.requestPermissions(this, permission_list, 1);
         }
-
 
         String root = Environment.getExternalStorageDirectory().toString();
         File myDir = new File(root + "/saved_QRCode_images");
@@ -139,9 +125,6 @@ public class QRCodeActivity extends Activity {
 //        return m.replaceAll("").trim(); // 將非上列所設定的字元全部replace 掉
 //    }
 
-
-
-
     public void genCode() {
         ImageView ivCode = (ImageView) findViewById(R.id.imageView);
         etContent = (EditText) findViewById(R.id.editTextQRCode);
@@ -154,7 +137,6 @@ public class QRCodeActivity extends Activity {
         } catch (WriterException e) {
             e.printStackTrace();
         }
-
     }
 
     private void takeScreenshot() {
@@ -194,8 +176,6 @@ public class QRCodeActivity extends Activity {
         startActivity(intent);
     }
 
-
-
     /***  Hides the soft keyboard */
     public void hideSoftKeyboard() {
         if(getCurrentFocus()!=null) {
@@ -204,17 +184,15 @@ public class QRCodeActivity extends Activity {
         }
     }
 
-
     @Override
     protected void onResume() {
         super.onResume();
         Log.d("debug","onResume()");
         //Toast.makeText(MainActivity.this ,   "onResume()" , Toast.LENGTH_SHORT).show(); // Crash Test
-       if( !VariableEditor.ScanText.equals("")){
+       if(!VariableEditor.ScanText.equals("")){
            etContent.setText(VariableEditor.ScanText);
+           genCode();
+           VariableEditor.ScanText="";
        }
-        genCode();
-
     }
-
 }
