@@ -83,16 +83,10 @@ public class ScannerActivity extends Activity implements ZXingScannerView.Result
                     dialog.dismiss();
 
                     OnResult=0;
-                    //mScannerView.resumeCameraPreview(ScannerActivity.this);
+                    mScannerView.resumeCameraPreview(ScannerActivity.this);
                     finish();
                 }
             });
-//            builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
-//            public void onClick(DialogInterface dialog, int id) {
-//                //TODO
-//                dialog.dismiss();
-//            }
-//        });
             AlertDialog dialog = builder.create();
             dialog.show();
         }

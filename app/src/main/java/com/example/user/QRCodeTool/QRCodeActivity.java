@@ -38,6 +38,8 @@ public class QRCodeActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_qrcode);
 
+        etContent = (EditText)findViewById(R.id.editTextQRCode);
+
         AppCompatButton btn_login = (AppCompatButton)findViewById(R.id.btn_QRCode);
         btn_login.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -127,7 +129,7 @@ public class QRCodeActivity extends Activity {
 
     public void genCode() {
         ImageView ivCode = (ImageView) findViewById(R.id.imageView);
-        etContent = (EditText) findViewById(R.id.editTextQRCode);
+
         BarcodeEncoder encoder = new BarcodeEncoder();
         try {
          QRCode_Str = etContent.getText().toString();
