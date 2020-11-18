@@ -53,7 +53,6 @@
             android:text="Save"
             android:textColor="@android:color/white" />
 
-
         <android.support.v7.widget.AppCompatButton
             android:id="@+id/btn_QRCode_scan"
             android:layout_width="match_parent"
@@ -61,6 +60,15 @@
             android:layout_marginBottom="25dp"
             android:background="@android:color/background_dark"
             android:text="QRCode Scanner"
+            android:textColor="@android:color/white" />
+
+        <android.support.v7.widget.AppCompatButton
+            android:id="@+id/btn_screenBrightness"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="25dp"
+            android:background="@android:color/background_dark"
+            android:text="Bright"
             android:textColor="@android:color/white" />
 
 </LinearLayout>

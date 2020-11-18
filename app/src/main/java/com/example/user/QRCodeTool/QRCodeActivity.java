@@ -2,17 +2,21 @@ package com.example.user.QRCodeTool;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.ContentResolver;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.AppCompatButton;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -33,6 +37,9 @@ public class QRCodeActivity extends Activity {
     EditText etContent;
     Bitmap bit;
 
+    private float brightness;
+    private boolean mBright=false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,8 +47,10 @@ public class QRCodeActivity extends Activity {
 
         etContent = (EditText)findViewById(R.id.editTextQRCode);
 
-        AppCompatButton btn_login = (AppCompatButton)findViewById(R.id.btn_QRCode);
-        btn_login.setOnClickListener(new View.OnClickListener() {
+        brightness= getWindow().getAttributes().screenBrightness;
+
+        AppCompatButton btn_QRCode = (AppCompatButton)findViewById(R.id.btn_QRCode);
+        btn_QRCode.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 hideSoftKeyboard();
@@ -49,13 +58,28 @@ public class QRCodeActivity extends Activity {
                 btn_save.setVisibility(View.VISIBLE);;
             }
         });
-
+        
         AppCompatButton  btn_QRCode_scan = (AppCompatButton)findViewById(R.id. btn_QRCode_scan);
         btn_QRCode_scan.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getApplication(), ScannerActivity.class);
                 startActivity(intent);
+            }
+        });
+
+        AppCompatButton btn_screenBrightness = (AppCompatButton)findViewById(R.id.btn_screenBrightness);
+        btn_screenBrightness.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                WindowManager.LayoutParams layout = getWindow().getAttributes();
+                if(mBright){
+                    layout.screenBrightness = 0F ;
+                }else{
+                    layout.screenBrightness = 0.5F ;
+                }
+                getWindow().setAttributes(layout);
+                mBright=!mBright;
             }
         });
 
@@ -82,6 +106,8 @@ public class QRCodeActivity extends Activity {
 //        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outStream);
 //        outStream.flush();
 //        outStream.close();
+
+
     }
 
     private void SaveImage(Bitmap finalBitmap) {
