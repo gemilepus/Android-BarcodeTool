@@ -26,37 +26,8 @@
         </activity>
 
         <activity
-            android:name="com.example.user.QRCodeTool.LoginActivity">
-
-        </activity>
-
-        <activity
-            android:name="com.example.user.QRCodeTool.ListActivity">
-
-        </activity>
-
-        <activity
-            android:name="com.example.user.QRCodeTool.EditActivity">
-
-        </activity>
-
-
-        <activity
-            android:name="com.example.user.QRCodeTool.QRCodeActivity">
-
-        </activity>
-
-        <activity
             android:name="com.example.user.QRCodeTool.ScannerActivity">
-
         </activity>
-
-        <activity
-            android:name="com.example.user.QRCodeTool.CipherCaptureActivity">
-
-        </activity>
-
-
 
     </application>
 
