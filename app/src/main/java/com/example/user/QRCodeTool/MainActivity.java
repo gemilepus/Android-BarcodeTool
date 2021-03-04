@@ -34,8 +34,8 @@ public class MainActivity extends Activity {
 
     private AppCompatButton btn_save;
     private String QRCode_Str;
-    EditText etContent;
-    Bitmap bit;
+    private EditText etContent;
+    private Bitmap bit;
 
     private float brightness;
     private boolean mBright=false;
@@ -46,10 +46,9 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_qrcode);
 
         VariableEditor.ScanText = "";
+        brightness= getWindow().getAttributes().screenBrightness;
 
         etContent = (EditText)findViewById(R.id.editTextQRCode);
-
-        brightness= getWindow().getAttributes().screenBrightness;
 
         AppCompatButton btn_QRCode = (AppCompatButton)findViewById(R.id.btn_QRCode);
         btn_QRCode.setOnClickListener(new View.OnClickListener() {
@@ -108,8 +107,6 @@ public class MainActivity extends Activity {
 //        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outStream);
 //        outStream.flush();
 //        outStream.close();
-
-
     }
 
     private void SaveImage(Bitmap finalBitmap) {
