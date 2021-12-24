@@ -56,7 +56,7 @@ public class MainActivity extends Activity {
             public void onClick(View view) {
                 hideSoftKeyboard();
                 genCode();
-                btn_save.setVisibility(View.VISIBLE);;
+                btn_save.setVisibility(View.VISIBLE);
             }
         });
 
@@ -219,6 +219,7 @@ public class MainActivity extends Activity {
         if(!VariableEditor.ScanText.equals("")){
             etContent.setText(VariableEditor.ScanText);
             genCode();
+            btn_save.setVisibility(View.VISIBLE);;
             VariableEditor.ScanText="";
         }
     }
