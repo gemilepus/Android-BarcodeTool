@@ -2,33 +2,39 @@ package com.example.user.QRCodeTool;
 
 import android.Manifest;
 import android.app.Activity;
-import android.content.ContentResolver;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
-import android.provider.Settings;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.widget.AppCompatButton;
 import android.util.Log;
 import android.view.View;
-import android.view.Window;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.AppCompatButton;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.ItemTouchHelper;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.user.QRCodeTool.View.MyAdapter;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.WriterException;
 import com.journeyapps.barcodescanner.BarcodeEncoder;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.util.ArrayList;
 import java.util.Date;
-import java.util.Random;
 
 public class MainActivity extends Activity {
 
@@ -47,7 +53,6 @@ public class MainActivity extends Activity {
 
         VariableEditor.ScanText = "";
         brightness= getWindow().getAttributes().screenBrightness;
-
         etContent = (EditText)findViewById(R.id.editTextQRCode);
 
         AppCompatButton btn_QRCode = (AppCompatButton)findViewById(R.id.btn_QRCode);
@@ -56,7 +61,6 @@ public class MainActivity extends Activity {
             public void onClick(View view) {
                 hideSoftKeyboard();
                 genCode();
-                btn_save.setVisibility(View.VISIBLE);
             }
         });
 
@@ -93,20 +97,52 @@ public class MainActivity extends Activity {
         });
         btn_save.setVisibility(View.GONE);
 
-//        //to get the image from the ImageView (say iv)
-//        BitmapDrawable draw = (BitmapDrawable) iv.getDrawable();
-//        Bitmap bitmap = draw.getBitmap();
-//
-//        FileOutputStream outStream = null;
-//        File sdCard = Environment.getExternalStorageDirectory();
-//        File dir = new File(sdCard.getAbsolutePath() + "/YourFolderName");
-//        dir.mkdirs();
-//        String fileName = String.format("%d.jpg", System.currentTimeMillis());
-//        File outFile = new File(dir, fileName);
-//        outStream = new FileOutputStream(outFile);
-//        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outStream);
-//        outStream.flush();
-//        outStream.close();
+
+        SetRecyclerView();
+    }
+
+    private ArrayList<String> CodeArray = new ArrayList<String>();
+    private MyAdapter adapter;
+    private void SetRecyclerView() {
+        RecyclerView recyclerView = findViewById(R.id.mRecyclerView);
+        recyclerView.setHasFixedSize(true);
+
+        RecyclerView.LayoutManager rLayoutManager = new LinearLayoutManager(this);
+        recyclerView.setLayoutManager(rLayoutManager);
+
+        adapter= new MyAdapter(CodeArray);
+        recyclerView.setAdapter(adapter);
+
+        RecyclerView.ItemDecoration itemDecoration = new DividerItemDecoration(this, DividerItemDecoration.VERTICAL);
+        recyclerView.addItemDecoration(itemDecoration);
+
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP | ItemTouchHelper.DOWN, ItemTouchHelper.ACTION_STATE_IDLE) {
+            @Override
+            public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
+                final int fromPos = viewHolder.getAbsoluteAdapterPosition();
+                final int toPos = target.getAbsoluteAdapterPosition();
+                //adapter.notifyItemMoved(fromPos, toPos);
+                return true;
+            }
+
+            @Override
+            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+
+            }
+
+            @Override
+            public void onSelectedChanged(@Nullable RecyclerView.ViewHolder viewHolder, int actionState) {
+                super.onSelectedChanged(viewHolder, actionState);
+
+              if(viewHolder != null){
+                  TextView textView= viewHolder.itemView.findViewById(R.id.mtext);
+                  Log.d("debug", "Value : " + textView.getText().toString());
+                  etContent.setText(textView.getText().toString());
+                  genCode();
+              }
+            }
+        });
+        itemTouchHelper.attachToRecyclerView(recyclerView);
     }
 
     private void SaveImage(Bitmap finalBitmap) {
@@ -120,15 +156,13 @@ public class MainActivity extends Activity {
         }
 
         String root = Environment.getExternalStorageDirectory().toString();
-        File myDir = new File(root + "/saved_QRCode_images");
+        File FileDir = new File(root + "/Pictures/QRCode");
+        FileDir.mkdirs();
 
-        myDir.mkdirs();
-        Random generator = new Random();
-        int n = 10000;
-        n = generator.nextInt(n);
-        String fname = "Image-"+   QRCode_Str +".jpg";
-        //String fname = "Image-"+   filterDate( etContent.getText().toString()) +".jpg";
-        File file = new File (myDir, fname);
+        Date now = new Date();
+        CharSequence mNow = android.text.format.DateFormat.format("yyyy-MM-dd", now);
+        String filename = QRCode_Str + "_" + mNow.toString() +".jpg";
+        File file = new File (FileDir, filename);
         if (file.exists ()) file.delete ();
         try {
             FileOutputStream out = new FileOutputStream(file);
@@ -143,26 +177,48 @@ public class MainActivity extends Activity {
         btn_save.setVisibility(View.GONE);
     }
 
-//    public String filterDate(String str){
-//        String filter = "[^0-9/-／]"; // 指定要過濾的字元
-//        Pattern p = Pattern.compile(filter);
-//        Matcher m = p.matcher(str);
-//
-//        Toast.makeText(this, str2, Toast.LENGTH_SHORT).show();
-//        return m.replaceAll("").trim(); // 將非上列所設定的字元全部replace 掉
-//    }
-
     public void genCode() {
         ImageView ivCode = (ImageView) findViewById(R.id.imageView);
 
         BarcodeEncoder encoder = new BarcodeEncoder();
         try {
             QRCode_Str = etContent.getText().toString();
-            bit = encoder.encodeBitmap(etContent.getText().toString(), BarcodeFormat.QR_CODE,
-                    500, 500);
+            bit = encoder.encodeBitmap(etContent.getText().toString(), BarcodeFormat.QR_CODE, 500, 500);
             ivCode.setImageBitmap(bit);
+
+            btn_save.setVisibility(View.VISIBLE);
         } catch (WriterException e) {
             e.printStackTrace();
+        }
+
+        if(!CodeArray.contains(QRCode_Str)){
+            CodeArray.add(QRCode_Str);
+            if(CodeArray.size() > 5){
+                CodeArray.remove(0);
+            }
+            // notify adapter
+            adapter.notifyDataSetChanged();
+        }
+    }
+
+
+    /***  Hides the soft keyboard */
+    public void hideSoftKeyboard() {
+        if(getCurrentFocus()!=null) {
+            InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+            inputMethodManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.d("debug","onResume()");
+        //Toast.makeText(MainActivity.this ,   "onResume()" , Toast.LENGTH_SHORT).show(); // Crash Test
+        if(!VariableEditor.ScanText.equals("")){
+            etContent.setText(VariableEditor.ScanText);
+            genCode();
+            VariableEditor.ScanText="";
         }
     }
 
@@ -201,26 +257,5 @@ public class MainActivity extends Activity {
         Uri uri = Uri.fromFile(imageFile);
         intent.setDataAndType(uri, "image/*");
         startActivity(intent);
-    }
-
-    /***  Hides the soft keyboard */
-    public void hideSoftKeyboard() {
-        if(getCurrentFocus()!=null) {
-            InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
-            inputMethodManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
-        }
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        Log.d("debug","onResume()");
-        //Toast.makeText(MainActivity.this ,   "onResume()" , Toast.LENGTH_SHORT).show(); // Crash Test
-        if(!VariableEditor.ScanText.equals("")){
-            etContent.setText(VariableEditor.ScanText);
-            genCode();
-            btn_save.setVisibility(View.VISIBLE);;
-            VariableEditor.ScanText="";
-        }
     }
 }

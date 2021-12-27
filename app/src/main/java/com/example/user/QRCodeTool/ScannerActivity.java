@@ -9,11 +9,12 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AlertDialog;
 import android.view.View;
 import android.view.ViewGroup;
+
+import androidx.appcompat.app.AlertDialog;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import com.google.zxing.Result;
 
@@ -62,15 +63,6 @@ public class ScannerActivity extends Activity implements ZXingScannerView.Result
                     mScannerView.resumeCameraPreview(ScannerActivity.this);
                 }
             }, 10);
-            //mScannerView.getRootView();
-
-//            Dialog settingsDialog = new Dialog(this);
-//            settingsDialog.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
-//            settingsDialog.setContentView(getLayoutInflater().inflate(R.layout.image_layout, null));
-//
-//            ImageView im = (ImageView) findViewById(R.id.image);
-//            im.setImageBitmap( loadBitmapFromView(mScannerView.getRootView())  );
-//            settingsDialog.show();
 
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle("Info");
@@ -98,7 +90,6 @@ public class ScannerActivity extends Activity implements ZXingScannerView.Result
         Bitmap bmp = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
         Canvas c = new Canvas(bmp);
         c.drawColor(Color.WHITE);
-        /** 如果不设置canvas画布为白色，则生成透明 */
         v.layout(0, 0, w, h);
         v.draw(c);
         return bmp;
