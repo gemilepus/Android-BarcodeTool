@@ -1,7 +1,11 @@
 package com.example.user.QRCodeTool;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -9,12 +13,14 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -40,12 +46,13 @@ public class MainActivity extends Activity {
 
     private AppCompatButton btn_save;
     private String QRCode_Str;
-    private EditText etContent;
+    private EditText mEditText;
     private Bitmap bit;
 
     private float brightness;
     private boolean mBright=false;
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,7 +60,28 @@ public class MainActivity extends Activity {
 
         VariableEditor.ScanText = "";
         brightness= getWindow().getAttributes().screenBrightness;
-        etContent = (EditText)findViewById(R.id.editTextQRCode);
+        mEditText = (EditText)findViewById(R.id.editTextQRCode);
+        mEditText.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                final int DRAWABLE_RIGHT = 2;
+
+                if(event.getAction() == MotionEvent.ACTION_UP) {
+                    if(event.getRawX() >= (mEditText.getRight() - mEditText.getCompoundDrawables()[DRAWABLE_RIGHT].getBounds().width())) {
+                        // Gets a handle to the clipboard service.
+                        ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+                        // Creates a new text clip to put on the clipboard
+                        ClipData clip = ClipData.newPlainText("text", mEditText.getText());
+                        // Set the clipboard's primary clip.
+                        clipboard.setPrimaryClip(clip);
+
+                        Toast.makeText(MainActivity.this, "copied to clipboard", Toast.LENGTH_SHORT).show();
+                        return true;
+                    }
+                }
+                return false;
+            }
+        });
 
         AppCompatButton btn_QRCode = (AppCompatButton)findViewById(R.id.btn_QRCode);
         btn_QRCode.setOnClickListener(new View.OnClickListener() {
@@ -137,7 +165,7 @@ public class MainActivity extends Activity {
               if(viewHolder != null){
                   TextView textView= viewHolder.itemView.findViewById(R.id.mtext);
                   Log.d("debug", "Value : " + textView.getText().toString());
-                  etContent.setText(textView.getText().toString());
+                  mEditText.setText(textView.getText().toString());
                   genCode();
               }
             }
@@ -170,7 +198,9 @@ public class MainActivity extends Activity {
             out.flush();
             out.close();
 
+            Toast.makeText(MainActivity.this, "saved " + filename, Toast.LENGTH_SHORT).show();
         } catch (Exception e) {
+            Toast.makeText(MainActivity.this, "Error... " + filename, Toast.LENGTH_SHORT).show();
             e.printStackTrace();
         }
 
@@ -182,8 +212,8 @@ public class MainActivity extends Activity {
 
         BarcodeEncoder encoder = new BarcodeEncoder();
         try {
-            QRCode_Str = etContent.getText().toString();
-            bit = encoder.encodeBitmap(etContent.getText().toString(), BarcodeFormat.QR_CODE, 500, 500);
+            QRCode_Str = mEditText.getText().toString();
+            bit = encoder.encodeBitmap(mEditText.getText().toString(), BarcodeFormat.QR_CODE, 500, 500);
             ivCode.setImageBitmap(bit);
 
             btn_save.setVisibility(View.VISIBLE);
@@ -216,7 +246,7 @@ public class MainActivity extends Activity {
         Log.d("debug","onResume()");
         //Toast.makeText(MainActivity.this ,   "onResume()" , Toast.LENGTH_SHORT).show(); // Crash Test
         if(!VariableEditor.ScanText.equals("")){
-            etContent.setText(VariableEditor.ScanText);
+            mEditText.setText(VariableEditor.ScanText);
             genCode();
             VariableEditor.ScanText="";
         }
