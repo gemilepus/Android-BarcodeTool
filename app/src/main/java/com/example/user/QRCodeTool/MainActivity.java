@@ -49,8 +49,7 @@ public class MainActivity extends Activity {
     private EditText mEditText;
     private Bitmap bit;
 
-    private float brightness;
-    private boolean mBright=false;
+    private boolean mBright = false;
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -59,7 +58,7 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_qrcode);
 
         VariableEditor.ScanText = "";
-        brightness= getWindow().getAttributes().screenBrightness;
+
         mEditText = (EditText)findViewById(R.id.editTextQRCode);
         mEditText.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -88,7 +87,7 @@ public class MainActivity extends Activity {
             @Override
             public void onClick(View view) {
                 hideSoftKeyboard();
-                genCode();
+                getCode();
             }
         });
 
@@ -124,8 +123,7 @@ public class MainActivity extends Activity {
             }
         });
         btn_save.setVisibility(View.GONE);
-
-
+        
         SetRecyclerView();
     }
 
@@ -166,7 +164,7 @@ public class MainActivity extends Activity {
                   TextView textView= viewHolder.itemView.findViewById(R.id.mtext);
                   Log.d("debug", "Value : " + textView.getText().toString());
                   mEditText.setText(textView.getText().toString());
-                  genCode();
+                  getCode();
               }
             }
         });
@@ -200,14 +198,14 @@ public class MainActivity extends Activity {
 
             Toast.makeText(MainActivity.this, "saved " + filename, Toast.LENGTH_SHORT).show();
         } catch (Exception e) {
-            Toast.makeText(MainActivity.this, "Error... " + filename, Toast.LENGTH_SHORT).show();
+            Toast.makeText(MainActivity.this, "Error... " , Toast.LENGTH_SHORT).show();
             e.printStackTrace();
         }
 
         btn_save.setVisibility(View.GONE);
     }
 
-    public void genCode() {
+    public void getCode() {
         ImageView ivCode = (ImageView) findViewById(R.id.imageView);
 
         BarcodeEncoder encoder = new BarcodeEncoder();
@@ -230,9 +228,7 @@ public class MainActivity extends Activity {
             adapter.notifyDataSetChanged();
         }
     }
-
-
-    /***  Hides the soft keyboard */
+    
     public void hideSoftKeyboard() {
         if(getCurrentFocus()!=null) {
             InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
@@ -244,10 +240,10 @@ public class MainActivity extends Activity {
     protected void onResume() {
         super.onResume();
         Log.d("debug","onResume()");
-        //Toast.makeText(MainActivity.this ,   "onResume()" , Toast.LENGTH_SHORT).show(); // Crash Test
+
         if(!VariableEditor.ScanText.equals("")){
             mEditText.setText(VariableEditor.ScanText);
-            genCode();
+            getCode();
             VariableEditor.ScanText="";
         }
     }
