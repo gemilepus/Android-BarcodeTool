@@ -69,9 +69,16 @@ public class ScannerActivity extends Activity implements ZXingScannerView.Result
             builder.setMessage("Contents = " + rawResult.getText() + ", Format = " + rawResult.getBarcodeFormat().toString() );
 
             VariableEditor.ScanText =  rawResult.getText();
+            builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    dialog.dismiss();
+
+                    OnResult=0;
+                    mScannerView.resumeCameraPreview(ScannerActivity.this);
+                }
+            });
             builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int id) {
-                    //TODO
                     dialog.dismiss();
 
                     OnResult=0;
