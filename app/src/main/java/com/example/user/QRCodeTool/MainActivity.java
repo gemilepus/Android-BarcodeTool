@@ -221,7 +221,7 @@ public class MainActivity extends Activity {
 
         if(!CodeArray.contains(QRCode_Str)){
             CodeArray.add(QRCode_Str);
-            if(CodeArray.size() > 5){
+            if(CodeArray.size() > 8){
                 CodeArray.remove(0);
             }
             // notify adapter
