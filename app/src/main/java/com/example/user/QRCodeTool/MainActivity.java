@@ -17,8 +17,10 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -40,13 +42,16 @@ import com.journeyapps.barcodescanner.BarcodeEncoder;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
 public class MainActivity extends Activity {
 
     private AppCompatButton btn_save;
     private String QRCode_Str;
     private EditText mEditText;
+    private Spinner spinner;
     private Bitmap bit;
 
     private boolean mBright = false;
@@ -123,8 +128,15 @@ public class MainActivity extends Activity {
             }
         });
         btn_save.setVisibility(View.GONE);
-        
+
+        spinner = (Spinner)findViewById(R.id.spinner);
+        List<BarcodeFormat> BarcodeEnumValues = Arrays.asList(BarcodeFormat.values());
+        ArrayAdapter<BarcodeFormat>  BarcodeList = new ArrayAdapter<BarcodeFormat>(this, android.R.layout.simple_spinner_dropdown_item, BarcodeEnumValues);
+        spinner.setAdapter(BarcodeList);
+        spinner.setSelection(11);
+
         SetRecyclerView();
+
     }
 
     private ArrayList<String> CodeArray = new ArrayList<String>();
@@ -211,12 +223,19 @@ public class MainActivity extends Activity {
         BarcodeEncoder encoder = new BarcodeEncoder();
         try {
             QRCode_Str = mEditText.getText().toString();
-            bit = encoder.encodeBitmap(mEditText.getText().toString(), BarcodeFormat.QR_CODE, 500, 500);
+            int mHeight = 200,mWidth = 800;
+            if(spinner.getSelectedItem().toString().equals("QR_CODE")){
+                mHeight = 500;
+                mWidth = 500;
+            }
+            bit = encoder.encodeBitmap(mEditText.getText().toString(), (BarcodeFormat)spinner.getSelectedItem(), mWidth, mHeight);
             ivCode.setImageBitmap(bit);
+
 
             btn_save.setVisibility(View.VISIBLE);
         } catch (WriterException e) {
             e.printStackTrace();
+            Toast.makeText(MainActivity.this, "It doesn't work", Toast.LENGTH_SHORT).show();
         }
 
         if(!CodeArray.contains(QRCode_Str)){
