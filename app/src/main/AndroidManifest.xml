@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.example.user.QRCodeTool">
+    package="com.example.user.BarcodeTool">
     <uses-permission android:name="android.permission.CAMERA"/>
     <uses-feature android:name="android.hardware.camera" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
@@ -18,7 +18,7 @@
         android:screenOrientation="portrait">
 
         <activity
-            android:name="com.example.user.QRCodeTool.MainActivity"
+            android:name="com.example.user.BarcodeTool.MainActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="adjustNothing"
@@ -30,7 +30,7 @@
         </activity>
 
         <activity
-            android:name="com.example.user.QRCodeTool.ScannerActivity">
+            android:name="com.example.user.BarcodeTool.ScannerActivity">
         </activity>
 
     </application>

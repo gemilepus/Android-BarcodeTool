@@ -1,4 +1,4 @@
-package com.example.user.QRCodeTool;
+package com.example.user.BarcodeTool;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
@@ -34,7 +34,7 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.user.QRCodeTool.View.MyAdapter;
+import com.example.user.BarcodeTool.View.MyAdapter;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.WriterException;
 import com.journeyapps.barcodescanner.BarcodeEncoder;
@@ -49,7 +49,7 @@ import java.util.List;
 public class MainActivity extends Activity {
 
     private AppCompatButton btn_save;
-    private String QRCode_Str;
+    private String BarcodeValue,BarcodeType;
     private EditText mEditText;
     private Spinner spinner;
     private Bitmap bit;
@@ -60,11 +60,11 @@ public class MainActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_qrcode);
+        setContentView(R.layout.activity_barcode);
 
         VariableEditor.ScanText = "";
 
-        mEditText = (EditText)findViewById(R.id.editTextQRCode);
+        mEditText = (EditText)findViewById(R.id.editTextBarcode);
         mEditText.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -87,8 +87,8 @@ public class MainActivity extends Activity {
             }
         });
 
-        AppCompatButton btn_QRCode = (AppCompatButton)findViewById(R.id.btn_QRCode);
-        btn_QRCode.setOnClickListener(new View.OnClickListener() {
+        AppCompatButton btn_Barcode = (AppCompatButton)findViewById(R.id.btn_Barcode);
+        btn_Barcode.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 hideSoftKeyboard();
@@ -96,8 +96,8 @@ public class MainActivity extends Activity {
             }
         });
 
-        AppCompatButton  btn_QRCode_scan = (AppCompatButton)findViewById(R.id. btn_QRCode_scan);
-        btn_QRCode_scan.setOnClickListener(new View.OnClickListener() {
+        AppCompatButton  btn_Barcode_scan = (AppCompatButton)findViewById(R.id. btn_Barcode_scan);
+        btn_Barcode_scan.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getApplication(), ScannerActivity.class);
@@ -191,15 +191,17 @@ public class MainActivity extends Activity {
             String[] permission_list = new String[1];
             permission_list[0] = permission;
             ActivityCompat.requestPermissions(this, permission_list, 1);
+
+            return;
         }
 
         String root = Environment.getExternalStorageDirectory().toString();
-        File FileDir = new File(root + "/Pictures/QRCode");
+        File FileDir = new File(root + "/Pictures/Barcode");
         FileDir.mkdirs();
 
         Date now = new Date();
         CharSequence mNow = android.text.format.DateFormat.format("yyyy-MM-dd", now);
-        String filename = QRCode_Str + "_" + mNow.toString() +".jpg";
+        String filename = BarcodeValue + "_" + BarcodeType + "_" + mNow.toString() +".jpg";
         File file = new File (FileDir, filename);
         if (file.exists ()) file.delete ();
         try {
@@ -222,9 +224,10 @@ public class MainActivity extends Activity {
 
         BarcodeEncoder encoder = new BarcodeEncoder();
         try {
-            QRCode_Str = mEditText.getText().toString();
+            BarcodeValue = mEditText.getText().toString();
+            BarcodeType = spinner.getSelectedItem().toString();
             int mHeight = 200,mWidth = 800;
-            if(spinner.getSelectedItem().toString().equals("QR_CODE")){
+            if(BarcodeType.equals("QR_CODE")){
                 mHeight = 500;
                 mWidth = 500;
             }
@@ -238,8 +241,8 @@ public class MainActivity extends Activity {
             Toast.makeText(MainActivity.this, "It doesn't work", Toast.LENGTH_SHORT).show();
         }
 
-        if(!CodeArray.contains(QRCode_Str)){
-            CodeArray.add(QRCode_Str);
+        if(!CodeArray.contains(BarcodeValue)){
+            CodeArray.add(BarcodeValue);
             if(CodeArray.size() > 8){
                 CodeArray.remove(0);
             }

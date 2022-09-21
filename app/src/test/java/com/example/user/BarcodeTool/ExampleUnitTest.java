@@ -1,4 +1,4 @@
-package com.example.user.QRCodeTool;
+package com.example.user.BarcodeTool;
 
 import org.junit.Test;
 

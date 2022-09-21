@@ -1,4 +1,4 @@
-package com.example.user.QRCodeTool;
+package com.example.user.BarcodeTool;
 
 import android.Manifest;
 import android.app.Activity;

@@ -1,4 +1,4 @@
-package com.example.user.QRCodeTool.View;
+package com.example.user.BarcodeTool.View;
 
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.annotation.NonNull;
@@ -7,7 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.example.user.QRCodeTool.R;
+import com.example.user.BarcodeTool.R;
 
 import java.util.ArrayList;
 

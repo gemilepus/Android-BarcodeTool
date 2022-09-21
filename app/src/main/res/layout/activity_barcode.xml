@@ -10,7 +10,7 @@
     android:layout_height="match_parent">
 
         <EditText
-            android:id="@+id/editTextQRCode"
+            android:id="@+id/editTextBarcode"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="0dp"
@@ -26,12 +26,12 @@
             android:layout_marginBottom="10dp"/>
 
         <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/btn_QRCode"
+            android:id="@+id/btn_Barcode"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="10dp"
             android:background="@android:color/background_dark"
-            android:text="BarCode"
+            android:text="Barcode"
             android:textColor="@android:color/white" />
 
         <FrameLayout
@@ -57,12 +57,12 @@
             android:textColor="@android:color/white" />
 
         <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/btn_QRCode_scan"
+            android:id="@+id/btn_Barcode_scan"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="10dp"
             android:background="@android:color/background_dark"
-            android:text="QRCode Scanner"
+            android:text="Barcode Scanner"
             android:textColor="@android:color/white" />
 
         <androidx.appcompat.widget.AppCompatButton

@@ -1,4 +1,4 @@
-package com.example.user.QRCodeTool;
+package com.example.user.BarcodeTool;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
