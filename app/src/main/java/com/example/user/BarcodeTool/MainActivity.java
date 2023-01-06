@@ -227,9 +227,13 @@ public class MainActivity extends Activity {
             BarcodeValue = mEditText.getText().toString();
             BarcodeType = spinner.getSelectedItem().toString();
             int mHeight = 200,mWidth = 800;
-            if(BarcodeType.equals("QR_CODE")){
-                mHeight = 500;
-                mWidth = 500;
+            switch(BarcodeType) {
+                case "DATA_MATRIX":
+                case "QR_CODE":
+                    mHeight = 500;
+                    mWidth = 500;
+                    break;
+                default:
             }
             bit = encoder.encodeBitmap(mEditText.getText().toString(), (BarcodeFormat)spinner.getSelectedItem(), mWidth, mHeight);
             ivCode.setImageBitmap(bit);
