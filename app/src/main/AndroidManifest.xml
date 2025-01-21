@@ -3,8 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools">
     <uses-permission android:name="android.permission.CAMERA"/>
     <uses-feature android:name="android.hardware.camera" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
-        tools:ignore="ScopedStorage" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="32" tools:ignore="ScopedStorage" />
 
     <application
         android:allowBackup="true"
@@ -13,12 +12,10 @@
         android:roundIcon="@mipmap/sharp_fullscreen_black_18dp"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
-        tools:ignore="GoogleAppIndexingWarning"
-        android:screenOrientation="portrait">
+        tools:ignore="GoogleAppIndexingWarning">
 
         <activity
             android:name="com.example.user.BarcodeTool.MainActivity"
-            android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="adjustNothing"
             android:exported="true">

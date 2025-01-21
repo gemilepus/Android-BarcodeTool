@@ -4,7 +4,7 @@ android {
     compileSdk 35
     defaultConfig {
         applicationId "com.example.user.barcodetool"
-        minSdk 26
+        minSdk 29
         targetSdk 35
         versionCode 1
         versionName "1.0"
@@ -31,9 +31,9 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:2.2.0'
 
     implementation 'androidx.core:core:1.15.0'
-    implementation 'androidx.recyclerview:recyclerview:1.3.2'
-
+    implementation 'androidx.recyclerview:recyclerview:1.4.0'
     testImplementation 'junit:junit:4.13.2'
+
     androidTestImplementation 'androidx.test.ext:junit:1.2.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.6.1'
 }
