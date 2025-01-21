@@ -5,6 +5,7 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.ClipData;
 import android.content.ClipboardManager;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -12,6 +13,7 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
@@ -48,9 +50,10 @@ import java.util.List;
 
 public class MainActivity extends Activity {
 
-    private AppCompatButton btn_save;
+    private AppCompatButton btn_save,btn_saveCode;
     private String BarcodeValue,BarcodeType;
     private EditText mEditText;
+    private TextView mTextView;
     private Spinner spinner;
     private Bitmap bit;
 
@@ -63,6 +66,8 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_barcode);
 
         VariableEditor.ScanText = "";
+
+        mTextView = (TextView)findViewById(R.id.textView);
 
         mEditText = (EditText)findViewById(R.id.editTextBarcode);
         mEditText.setOnTouchListener(new View.OnTouchListener() {
@@ -111,7 +116,8 @@ public class MainActivity extends Activity {
             public void onClick(View view) {
                 WindowManager.LayoutParams layout = getWindow().getAttributes();
                 if(mBright){
-                    layout.screenBrightness = 0F ;
+                    ContentResolver contentResolver = getContentResolver();
+                    layout.screenBrightness = Settings.System.getFloat(contentResolver, Settings.System.SCREEN_BRIGHTNESS, /* default value */ 0);
                 }else{
                     layout.screenBrightness = 0.5F ;
                 }
@@ -128,6 +134,14 @@ public class MainActivity extends Activity {
             }
         });
         btn_save.setVisibility(View.GONE);
+
+        btn_saveCode = (AppCompatButton)findViewById(R.id.btn_saveCode);
+        btn_saveCode.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                SaveCode(String.join(", ", CodeArray));
+            }
+        });
 
         spinner = (Spinner)findViewById(R.id.spinner);
         List<BarcodeFormat> BarcodeEnumValues = Arrays.asList(BarcodeFormat.values());
@@ -184,15 +198,17 @@ public class MainActivity extends Activity {
     }
 
     private void SaveImage(Bitmap finalBitmap) {
-        // permission check
-        String permission = Manifest.permission.WRITE_EXTERNAL_STORAGE;
-        int grant = ContextCompat.checkSelfPermission(this, permission);
-        if (grant != PackageManager.PERMISSION_GRANTED) {
-            String[] permission_list = new String[1];
-            permission_list[0] = permission;
-            ActivityCompat.requestPermissions(this, permission_list, 1);
+        if (android.os.Build.VERSION.SDK_INT <=32) {
+            // permission check
+            String permission = Manifest.permission.WRITE_EXTERNAL_STORAGE;
+            int grant = ContextCompat.checkSelfPermission(this, permission);
+            if (grant != PackageManager.PERMISSION_GRANTED) {
+                String[] permission_list = new String[1];
+                permission_list[0] = permission;
+                ActivityCompat.requestPermissions(this, permission_list, 1);
 
-            return;
+                return;
+            }
         }
 
         String root = Environment.getExternalStorageDirectory().toString();
@@ -200,8 +216,10 @@ public class MainActivity extends Activity {
         FileDir.mkdirs();
 
         Date now = new Date();
-        CharSequence mNow = android.text.format.DateFormat.format("yyyy-MM-dd", now);
+        CharSequence mNow = android.text.format.DateFormat.format("yyyy-MM-dd HHmmss", now);
         String filename = BarcodeValue + "_" + BarcodeType + "_" + mNow.toString() +".jpg";
+        filename= filename.replaceAll("[;\\/:*?\"<>|&']","");
+
         File file = new File (FileDir, filename);
         if (file.exists ()) file.delete ();
         try {
@@ -217,6 +235,42 @@ public class MainActivity extends Activity {
         }
 
         btn_save.setVisibility(View.GONE);
+    }
+
+    private void SaveCode(String txt) {
+        if (android.os.Build.VERSION.SDK_INT <=32) {
+            // permission check
+            String permission = Manifest.permission.WRITE_EXTERNAL_STORAGE;
+            int grant = ContextCompat.checkSelfPermission(this, permission);
+            if (grant != PackageManager.PERMISSION_GRANTED) {
+                String[] permission_list = new String[1];
+                permission_list[0] = permission;
+                ActivityCompat.requestPermissions(this, permission_list, 1);
+
+                return;
+            }
+        }
+
+        String root = Environment.getExternalStorageDirectory().toString();
+        File FileDir = new File(root + "/Download/Barcode");
+        FileDir.mkdirs();
+
+        Date now = new Date();
+        CharSequence mNow = android.text.format.DateFormat.format("yyyy-MM-dd HHmmss", now);
+        String filename = mNow.toString() +".txt";
+        File file = new File (FileDir, filename);
+        if (file.exists ()) file.delete ();
+        try {
+            FileOutputStream out = new FileOutputStream(file);
+            out.write(txt.getBytes());
+            out.flush();
+            out.close();
+
+            Toast.makeText(MainActivity.this, "saved " + filename, Toast.LENGTH_SHORT).show();
+        } catch (Exception e) {
+            Toast.makeText(MainActivity.this, "Error... " , Toast.LENGTH_SHORT).show();
+            e.printStackTrace();
+        }
     }
 
     public void getCode() {
@@ -247,12 +301,14 @@ public class MainActivity extends Activity {
 
         if(!CodeArray.contains(BarcodeValue)){
             CodeArray.add(BarcodeValue);
-            if(CodeArray.size() > 8){
+            if(CodeArray.size() > 200){
                 CodeArray.remove(0);
             }
             // notify adapter
             adapter.notifyDataSetChanged();
         }
+
+        mTextView.setText(CodeArray.size()+"/200");
     }
     
     public void hideSoftKeyboard() {
@@ -267,7 +323,7 @@ public class MainActivity extends Activity {
         super.onResume();
         Log.d("debug","onResume()");
 
-        if(!VariableEditor.ScanText.equals("")){
+        if(!VariableEditor.ScanText.isEmpty()){
             mEditText.setText(VariableEditor.ScanText);
             getCode();
             VariableEditor.ScanText="";
